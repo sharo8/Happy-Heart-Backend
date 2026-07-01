@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "happy-hearts-backend (Maven)",
+      "path": "happy-hearts-backend"
+    }
+  ],
+  "settings": {
+    "java.import.maven.enabled": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.project.importOnFirstTimeStartup": "automatic"
+  }
+}
