@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginChallengeResponse {
-
+    private String devOtp;
     private UUID challengeId;
     private String emailMasked;
     private Instant expiresAt;
