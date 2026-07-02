@@ -49,6 +49,10 @@ public class AuthService {
     private final EmailService emailService;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthService.class);
+
+
+
     @Transactional
     public LoginChallengeResponse initiateLogin(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -72,15 +76,28 @@ public class AuthService {
                 .build();
         challenge = loginOtpChallengeRepository.save(challenge);
 
-        emailService.sendLoginOtp(user, otp);
+        boolean emailSent = true;
+        try {
+            emailService.sendLoginOtp(user, otp);
+        } catch (Exception e) {
+            emailSent = false;
+            log.warn("Failed to send OTP email to {}, returning OTP in response instead. Reason: {}", user.getEmail(), e.getMessage());
+        }
 
         return LoginChallengeResponse.builder()
                 .challengeId(challenge.getId())
                 .emailMasked(OtpUtils.maskEmail(user.getEmail()))
                 .expiresAt(expiresAt)
                 .otpExpiresInMinutes(authOtpProperties.getOtpExpirationMinutes())
+                .devOtp(emailSent ? null : otp)
                 .build();
     }
+
+
+
+
+
+
 
     @Transactional
     public AuthResponse verifyOtpAndIssueTokens(VerifyOtpRequest request) {
